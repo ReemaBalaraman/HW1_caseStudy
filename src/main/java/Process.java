@@ -106,7 +106,7 @@ public class Process {
 						+ " " + "and doesn't have a functional WIC clinic in the area. ");
 			}
 
-			//Check for Birth Rate area
+			//Check for Cancer area
 			String key1 = sortedCancer.lastKey();
 			if(!(zipCodeWIC.contains(zipCodes.get(key1))))
 			{
@@ -114,7 +114,7 @@ public class Process {
 						+ "zip code"+ " " +zipCodes.get(key1) +" " + "has a high breast cancer rate of" +" "+ sortedCancer.get(key1)
 						+ " " + "and doesn't have a functional WIC clinic in the area. ");
 			}
-			//Check for Birth Rate area
+			//Check for Mortality Rate area
 			String key2 = sortedMortalityRate.firstKey();
 			if(!(zipCodeWIC.contains(zipCodes.get(key2))))
 			{
