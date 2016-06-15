@@ -1,10 +1,14 @@
 package main.java;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -41,6 +45,10 @@ public class Process {
 			}
 
 			Map<String,String> zipCodes = zipCodeMap();
+			HashMap< String,Float> birthRate = new HashMap< String,Float>();
+			HashMap< String,Float> cancer = new HashMap< String,Float>();
+			HashMap< String,Float> mortalityRate = new HashMap< String,Float>();
+			
 			System.out.println("size zipCodes: " + zipCodes.size());
 			// 2. Fetching data from Public health data set
 			details = new File("src/main/resources/Health_stats.xml");
@@ -58,17 +66,34 @@ public class Process {
 					Element element = (Element) node;
 					String communityAreaName = getValue("community_area_name", element);
 					String communityAreaCode = getValue("community_area", element);
-
+                    String birthRatestr = getValue("birth_rate", element);
+                    String cancerStr = getValue("breast_cancer_in_females", element);
+                    String mortalityRateStr = getValue("breast_cancer_in_females", element);
+                    
 					if(zipCodes.containsKey(communityAreaCode))
 					{
-						community_zipCode.put(communityAreaName,zipCodes.get(communityAreaCode));	
+						community_zipCode.put(communityAreaName,zipCodes.get(communityAreaCode));
+						birthRate.put(communityAreaCode ,Float.parseFloat(birthRatestr));
+						cancer.put(communityAreaCode ,Float.parseFloat(cancerStr));
+						mortalityRate.put(communityAreaCode , Float.parseFloat(mortalityRateStr));
 					}
-
+               
 				}
 			}
-			System.out.println("community_zipCode : " + community_zipCode);
-			System.out.println("size : " + community_zipCode.size());
-
+			
+			/* Start sorting*/
+			Comparator<String> comparator1 = new ValueComparator<String,Float>(birthRate);
+			TreeMap<String,Float> sortedBirthRate = new TreeMap<String,Float>(comparator1);
+			sortedBirthRate.putAll(birthRate);
+			
+			Comparator<String> comparator2 = new ValueComparator<String,Float>(cancer);
+			TreeMap<String,Float> sortedCancer = new TreeMap<String,Float>(comparator2);
+			sortedCancer.putAll(cancer);
+			
+			Comparator<String> comparator3 = new ValueComparator<String,Float>(mortalityRate);
+			TreeMap<String,Float> sortedMortalityRate = new TreeMap<String,Float>(comparator3);
+			sortedMortalityRate.putAll(mortalityRate);
+			/* End sorting*/
 		}
 
 		catch (Exception ex) {
@@ -76,6 +101,8 @@ public class Process {
 		}	
 	}
 
+	
+	
 	//to read each row values
 	private static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
@@ -83,6 +110,8 @@ public class Process {
 		return node.getNodeValue();
 	}
 
+	
+	
 	/* Fetching data from grocery list data set 	
     to map community area zip code with WIC data set */
 	private Map<String,String> zipCodeMap()
@@ -116,6 +145,23 @@ public class Process {
 		} 
 		return zipCodes;
 	}
+	
+	/* a comparator for sorting maps */
+	class ValueComparator<K, V extends Comparable<V>> implements Comparator<K>{
+	 
+		HashMap<K, V> map = new HashMap<K, V>();
+	 
+		public ValueComparator(HashMap<K, V> map){
+			this.map.putAll(map);
+		}
+	 
+		@Override
+		public int compare(K s1, K s2) {
+			return -map.get(s1).compareTo(map.get(s2));//descending order	
+		}
+	}
+	
+	
 	public static void main(String [ ] args)
 	{
 		Process p = new Process ();
