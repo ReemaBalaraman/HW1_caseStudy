@@ -103,26 +103,24 @@ public class Process {
 			{
 				System.out.println(community_zipCode.get(zipCodes.get(key)) + " " + "area with" + " " 
 						+ "zip code"+" " + zipCodes.get(key) +" " + "has a low birth rate of" + " "+sortedBirthRate.get(key)
-						+ " " + "and doesn't have a functional WIC clinic in the area ");
+						+ " " + "and doesn't have a functional WIC clinic in the area. ");
 			}
 
 			//Check for Birth Rate area
 			String key1 = sortedCancer.lastKey();
-			System.out.println("zip code " + zipCodes.get(key1));
 			if(!(zipCodeWIC.contains(zipCodes.get(key1))))
 			{
 				System.out.println(community_zipCode.get(zipCodes.get(key1)) + " " + "area with" + " " 
 						+ "zip code"+ " " +zipCodes.get(key1) +" " + "has a high breast cancer rate of" +" "+ sortedCancer.get(key1)
-						+ " " + "and doesn't have a functional WIC clinic in the area ");
+						+ " " + "and doesn't have a functional WIC clinic in the area. ");
 			}
 			//Check for Birth Rate area
 			String key2 = sortedMortalityRate.firstKey();
-			System.out.println("zip code " + zipCodes.get(key2));
 			if(!(zipCodeWIC.contains(zipCodes.get(key2))))
 			{
 				System.out.println(community_zipCode.get(zipCodes.get(key2)) + " " + "area with" + " " 
 						+ "zip code"+" "+ zipCodes.get(key2) +" " + "has a low infant mortality rate of" +" "+ sortedMortalityRate.get(key2)
-						+ " " + "and doesn't have a functional WIC clinic in the area ");
+						+ " " + "and doesn't have a functional WIC clinic in the area. ");
 			}
 
 			/* End : Processing result */
@@ -136,7 +134,7 @@ public class Process {
 
 
 	//to read each row values
-	private static String getValue(String tag, Element element) {
+	public static String getValue(String tag, Element element) {
 		NodeList nodes = element.getElementsByTagName(tag).item(0).getChildNodes();
 		Node node = (Node) nodes.item(0);
 		return node.getNodeValue();
@@ -146,7 +144,7 @@ public class Process {
 
 	/* Fetching data from grocery list data set 	
     to map community area zip code with WIC data set */
-	private Map<String,String> zipCodeMap()
+	public Map<String,String> zipCodeMap()
 	{
 		Map<String,String> zipCodes = new HashMap<String,String>(); 
 		try{
@@ -192,7 +190,7 @@ public class Process {
 		}
 	}
 
-	
+
 	public static void main(String [ ] args)
 	{
 		Process p = new Process ();
