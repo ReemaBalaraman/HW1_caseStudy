@@ -27,14 +27,9 @@ public class Process {
 
 		try{
 			// 1. Fetching data from WIC health clinic data set
-			File details = new File("src/main/resources/WIC_clinics.xml");
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(details);
-			doc.getDocumentElement().normalize();
-
-			NodeList nodes = doc.getElementsByTagName("row");
+			NodeList nodes = fetchXMLData("WIC_clinics.xml");
 			List<String> zipCodeWIC = new ArrayList<String>();
+
 			//Looping through each node
 			for (int i = 1; i < nodes.getLength(); i++) {
 				Node node = nodes.item(i);
@@ -50,13 +45,8 @@ public class Process {
 			HashMap< String,Float> mortalityRate = new HashMap< String,Float>();
 
 			// 2. Fetching data from Public health data set
-			details = new File("src/main/resources/Health_stats.xml");
-			dbFactory = DocumentBuilderFactory.newInstance();
-			dBuilder = dbFactory.newDocumentBuilder();
-			doc = dBuilder.parse(details);
-			doc.getDocumentElement().normalize();
+			NodeList nodes_second = fetchXMLData("Health_stats.xml");
 			Map<String,String> community_zipCode = new HashMap<String,String>();
-			NodeList nodes_second = doc.getElementsByTagName("row");
 
 			//Looping through each node
 			for (int i = 1; i < nodes_second.getLength(); i++) {
@@ -96,31 +86,36 @@ public class Process {
 
 
 			/* Start : Processing result */
+			//OutPut Heading :
+			System.out.println("The result shown below is basd on the analysis carried"
+					+ " out for identifying areas effected with low birth rate,high breast cancer rate and high infant mortality rate and doesnt have a WIC clinic. ");
+			System.out.println("RESULT : ");
+
 			//Check for Birth Rate area
 			String key = sortedBirthRate.firstKey();
 
 			if(!(zipCodeWIC.contains(zipCodes.get(key))))
 			{
-				System.out.println(community_zipCode.get(zipCodes.get(key)) + " " + "area with" + " " 
+				System.out.println("=> "+ community_zipCode.get(zipCodes.get(key)) + " " + "area with" + " " 
 						+ "zip code"+" " + zipCodes.get(key) +" " + "has a low birth rate of" + " "+sortedBirthRate.get(key)
-						+ " " + "and doesn't have a functional WIC clinic in the area. ");
+						+ " " + "and according to WIC data set this area doesn't have a functional WIC clinic . ");
 			}
 
 			//Check for Cancer area
 			String key1 = sortedCancer.lastKey();
 			if(!(zipCodeWIC.contains(zipCodes.get(key1))))
 			{
-				System.out.println(community_zipCode.get(zipCodes.get(key1)) + " " + "area with" + " " 
+				System.out.println("=> "+ community_zipCode.get(zipCodes.get(key1)) + " " + "area with" + " " 
 						+ "zip code"+ " " +zipCodes.get(key1) +" " + "has a high breast cancer rate of" +" "+ sortedCancer.get(key1)
-						+ " " + "and doesn't have a functional WIC clinic in the area. ");
+						+ " " + "and according to WIC data set this area doesn't have a functional WIC clinic. ");
 			}
 			//Check for Mortality Rate area
 			String key2 = sortedMortalityRate.firstKey();
 			if(!(zipCodeWIC.contains(zipCodes.get(key2))))
 			{
-				System.out.println(community_zipCode.get(zipCodes.get(key2)) + " " + "area with" + " " 
-						+ "zip code"+" "+ zipCodes.get(key2) +" " + "has a low infant mortality rate of" +" "+ sortedMortalityRate.get(key2)
-						+ " " + "and doesn't have a functional WIC clinic in the area. ");
+				System.out.println("=> "+ community_zipCode.get(zipCodes.get(key2)) + " " + "area with" + " " 
+						+ "zip code"+" "+ zipCodes.get(key2) +" " + "has a high infant mortality rate of" +" "+ sortedMortalityRate.get(key2)
+						+ " " + "and according to WIC data set this area doesn't have a functional WIC clinic. ");
 			}
 
 			/* End : Processing result */
@@ -131,7 +126,26 @@ public class Process {
 		}	
 	}
 
+	//to read and parse XML data sets
+	public NodeList fetchXMLData(String xmlName)
+	{
+		NodeList nodes = null;
+		try
+		{
+			File details = new File("src/main/resources/" + xmlName);
+			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(details);
+			doc.getDocumentElement().normalize();
 
+			nodes = doc.getElementsByTagName("row");
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return nodes;
+	}
 
 	//to read each row values
 	public static String getValue(String tag, Element element) {
@@ -148,13 +162,7 @@ public class Process {
 	{
 		Map<String,String> zipCodes = new HashMap<String,String>(); 
 		try{
-			File details = new File("src/main/resources/Area_zipCode.xml");
-			DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-			Document doc = dBuilder.parse(details);
-			doc.getDocumentElement().normalize();
-
-			NodeList nodes = doc.getElementsByTagName("row");
+			NodeList nodes = fetchXMLData("Area_zipCode.xml");
 			//Looping through each node
 
 			for (int i = 1; i < nodes.getLength(); i++) {
